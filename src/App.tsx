@@ -2,6 +2,9 @@ import { Link, Route, Routes } from 'react-router-dom'
 import { Header } from './components/Header'
 import { EventsPage } from './pages/EventsPage'
 import { EventDetailPage } from './pages/EventDetailPage'
+import { LoginPage } from './pages/LoginPage'
+import { RegisterPage } from './pages/RegisterPage'
+import { ProtectedRoute } from './components/auth/ProtectedRoute'
 
 function Placeholder({ title }: { title: string }) {
   return (
@@ -20,7 +23,14 @@ export default function App() {
       <Routes>
         <Route path="/" element={<EventsPage />} />
         <Route path="/events/:id" element={<EventDetailPage />} />
-        <Route path="/login" element={<Placeholder title="Iniciar sesión" />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/profile" element={<Placeholder title="Perfil" />} />
+        </Route>
+        <Route element={<ProtectedRoute role="admin" />}>
+          <Route path="/admin" element={<Placeholder title="Administración" />} />
+        </Route>
         <Route path="*" element={<Placeholder title="Página no encontrada" />} />
       </Routes>
     </>

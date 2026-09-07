@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { eventSchema } from './event.schema.ts'
 
 export const reservationInputSchema = z.object({
   eventId: z.string().regex(/^[a-fA-F0-9]{24}$/, 'El evento no es válido.'),
@@ -17,3 +18,10 @@ export const reservationResponseSchema = z.object({
 export type ReservationInput = z.infer<typeof reservationInputSchema>
 export type ReservationFormValues = z.infer<ReturnType<typeof createReservationFormSchema>>
 export type ReservationResponse = z.infer<typeof reservationResponseSchema>
+
+export const myReservationSchema = reservationResponseSchema.shape.reservation.pick({ id: true, quantity: true }).extend({
+  createdAt: z.iso.datetime({ offset: true }),
+  eventId: eventSchema.pick({ id: true, name: true, date: true, location: true }).nullable(),
+})
+export const myReservationsSchema = z.array(myReservationSchema)
+export type MyReservation = z.infer<typeof myReservationSchema>

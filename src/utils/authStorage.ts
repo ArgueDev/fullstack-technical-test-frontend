@@ -1,13 +1,25 @@
+import { z } from 'zod'
 import { decodeAuthToken } from './decodeAuthToken.ts'
 
 const storageKey = 'ticket-reservation.auth.token'
 const listeners = new Set<() => void>()
 
-function readStoredToken() {
-  try { return localStorage.getItem(storageKey) } catch { return null }
+const storedSessionSchema = z.object({ token: z.string(), name: z.string().optional() })
+
+function readStoredSession() {
+  try {
+    const value = localStorage.getItem(storageKey)
+    if (!value) return null
+    // Existing sessions stored the raw JWT under this same key.
+    if (!value.startsWith('{')) return { token: value }
+    return storedSessionSchema.parse(JSON.parse(value))
+  } catch {
+    removeStoredToken()
+    return null
+  }
 }
 
-let currentToken = readStoredToken()
+let currentSession = readStoredSession()
 
 function removeStoredToken() {
   try { localStorage.removeItem(storageKey) } catch { /* In-memory logout still works if storage is unavailable. */ }
@@ -19,20 +31,24 @@ function notify() {
 
 export const authStorage = {
   getToken(): string | null {
-    if (currentToken && !decodeAuthToken(currentToken)) {
-      currentToken = null
+    if (currentSession && !decodeAuthToken(currentSession.token)) {
+      currentSession = null
       removeStoredToken()
     }
-    return currentToken
+    return currentSession?.token ?? null
   },
-  setToken(token: string) {
+  getName(): string | null {
+    return authStorage.getToken() ? currentSession?.name ?? null : null
+  },
+  setToken(token: string, name?: string) {
     if (!decodeAuthToken(token)) throw new Error('Invalid session')
-    localStorage.setItem(storageKey, token)
-    currentToken = token
+    const session = name === undefined ? { token } : { token, name }
+    localStorage.setItem(storageKey, name === undefined ? token : JSON.stringify(session))
+    currentSession = session
     notify()
   },
   clear() {
-    currentToken = null
+    currentSession = null
     removeStoredToken()
     notify()
   },
@@ -40,12 +56,12 @@ export const authStorage = {
     listeners.add(listener)
     const onStorage = (event: StorageEvent) => {
       if (event.key === storageKey || event.key === null) {
-        currentToken = readStoredToken()
+        currentSession = readStoredSession()
         listener()
       }
     }
     const onFocus = () => {
-      currentToken = readStoredToken()
+      currentSession = readStoredSession()
       listener()
     }
     window.addEventListener('storage', onStorage)

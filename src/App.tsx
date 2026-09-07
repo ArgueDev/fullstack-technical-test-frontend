@@ -2,6 +2,7 @@ import { Link, Route, Routes } from 'react-router-dom'
 import { Header } from './components/Header'
 import { EventsPage } from './pages/EventsPage'
 import { EventDetailPage } from './pages/EventDetailPage'
+import { ProfilePage } from './pages/ProfilePage'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
@@ -26,7 +27,7 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route element={<ProtectedRoute />}>
-          <Route path="/profile" element={<Placeholder title="Perfil" />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Route>
         <Route element={<ProtectedRoute role="admin" />}>
           <Route path="/admin" element={<Placeholder title="Administración" />} />

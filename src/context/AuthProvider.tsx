@@ -5,6 +5,7 @@ import { decodeAuthToken } from '../utils/decodeAuthToken'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const token = useSyncExternalStore(authStorage.subscribe, authStorage.getToken, () => null)
+  const name = useSyncExternalStore(authStorage.subscribe, authStorage.getName, () => null)
   const payload = useMemo(() => token ? decodeAuthToken(token) : null, [token])
 
   useEffect(() => {
@@ -16,11 +17,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [payload, token])
 
   const value = useMemo(() => ({
-    user: payload ? { userId: payload.userId, role: payload.role } : null,
+    user: payload ? { userId: payload.userId, role: payload.role, name } : null,
     isAuthenticated: payload !== null,
     establishSession: authStorage.setToken,
     logout: authStorage.clear,
-  }), [payload])
+  }), [payload, name])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

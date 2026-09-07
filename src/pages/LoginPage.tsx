@@ -20,7 +20,7 @@ export function LoginPage() {
   const onSubmit = handleSubmit(async (values) => {
     try {
       const response = await login(values)
-      establishSession(response.token)
+      establishSession(response.token, response.user.name)
       navigate(from, { replace: true })
     } catch (error) {
       setError('root', { message: getAuthError(error) })

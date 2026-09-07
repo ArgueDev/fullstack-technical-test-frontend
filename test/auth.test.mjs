@@ -37,7 +37,7 @@ test('JWT decoding accepts known roles and rejects corrupt, expired or incomplet
   }
 })
 
-test('storage restores only usable sessions, persists only the JWT and clears expired sessions', async () => {
+test('storage restores sessions and clears the persisted name on logout and expiry', async () => {
   const entries = new Map([['ticket-reservation.auth.token', jwt(payload)]])
   const previous = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')
   Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: {
@@ -55,8 +55,18 @@ test('storage restores only usable sessions, persists only the JWT and clears ex
     assert.throws(() => authStorage.setToken('broken'))
     authStorage.setToken(jwt(payload))
     assert.deepEqual([...entries.values()], [jwt(payload)])
+    authStorage.setToken(jwt(payload), 'Ana Real')
+    assert.equal(authStorage.getName(), 'Ana Real')
+    assert.deepEqual(JSON.parse(entries.get('ticket-reservation.auth.token')), { token: jwt(payload), name: 'Ana Real' })
+    const restored = await import('../src/utils/authStorage.ts?name-restoration')
+    assert.equal(restored.authStorage.getName(), 'Ana Real')
+    authStorage.clear()
+    assert.equal(authStorage.getName(), null)
+    assert.equal(entries.size, 0)
+    authStorage.setToken(jwt(payload), 'Ana Real')
     Date.now = () => (payload.exp + 1) * 1000
     assert.equal(authStorage.getToken(), null)
+    assert.equal(authStorage.getName(), null)
     assert.equal(entries.size, 0)
   } finally {
     Date.now = now

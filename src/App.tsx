@@ -1,6 +1,7 @@
 import { Link, Route, Routes } from 'react-router-dom'
 import { Header } from './components/Header'
 import { EventsPage } from './pages/EventsPage'
+import { EventDetailPage } from './pages/EventDetailPage'
 
 function Placeholder({ title }: { title: string }) {
   return (
@@ -18,7 +19,7 @@ export default function App() {
       <Header />
       <Routes>
         <Route path="/" element={<EventsPage />} />
-        <Route path="/events/:id" element={<Placeholder title="Detalle del evento" />} />
+        <Route path="/events/:id" element={<EventDetailPage />} />
         <Route path="/login" element={<Placeholder title="Iniciar sesión" />} />
         <Route path="*" element={<Placeholder title="Página no encontrada" />} />
       </Routes>

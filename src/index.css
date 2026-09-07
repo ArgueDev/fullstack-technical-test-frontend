@@ -1,1 +1,22 @@
 @import "tailwindcss";
+
+@layer base {
+  body {
+    @apply m-0 min-w-80 bg-slate-50 font-sans text-slate-900 antialiased;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-4 outline-indigo-600;
+  }
+  button:not(:disabled), select:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  .filter-label {
+    @apply mb-2 block text-sm font-semibold text-slate-700;
+  }
+  .filter-input {
+    @apply block min-h-12 w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900;
+  }
+}

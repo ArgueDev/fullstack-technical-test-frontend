@@ -1,0 +1,16 @@
+node_modules
+dist
+dist-ssr
+.git
+.env
+.env.*
+logs
+*.log
+.DS_Store
+.vscode
+.idea
+.codex
+.agents
+test
+coverage
+README.md

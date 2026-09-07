@@ -12,15 +12,16 @@ export function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const navigationState: unknown = location.state
+  const from = typeof navigationState === 'object' && navigationState !== null && 'from' in navigationState && typeof navigationState.from === 'string' && /^\/events\/[^/?#]+$/.test(navigationState.from) ? navigationState.from : '/'
   const registered = typeof navigationState === 'object' && navigationState !== null && 'registered' in navigationState && navigationState.registered === true
   const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) })
-  if (isAuthenticated) return <Navigate to="/" replace />
+  if (isAuthenticated) return <Navigate to={from} replace />
 
   const onSubmit = handleSubmit(async (values) => {
     try {
       const response = await login(values)
       establishSession(response.token)
-      navigate('/', { replace: true })
+      navigate(from, { replace: true })
     } catch (error) {
       setError('root', { message: getAuthError(error) })
     }

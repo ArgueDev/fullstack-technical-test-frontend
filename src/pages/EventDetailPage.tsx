@@ -1,3 +1,4 @@
+import { ReservationPanel } from '../components/reservations/ReservationPanel'
 import { Link, useParams } from 'react-router-dom'
 import { useEvent } from '../hooks/events/useEvent'
 import { formatDate } from '../utils/formatDate'
@@ -50,12 +51,7 @@ export function EventDetailPage() {
                 {event.availableTickets > 0 ? 'Disponible' : 'Agotado'}
               </span>
               <h2 className="mt-5 text-xl font-bold">{event.availableTickets} {event.availableTickets === 1 ? 'ticket disponible' : 'tickets disponibles'}</h2>
-              <button type="button" disabled aria-describedby="reservation-notice" className="mt-6 w-full cursor-not-allowed rounded-lg bg-slate-200 px-4 py-3 text-sm font-semibold text-slate-600">
-                {event.availableTickets > 0 ? 'Reservar tickets' : 'Agotado'}
-              </button>
-              <p id="reservation-notice" className="mt-3 text-sm leading-relaxed text-slate-600">
-                {event.availableTickets > 0 ? 'La reserva de tickets estará disponible próximamente.' : 'Este evento no tiene tickets disponibles.'}
-              </p>
+              <ReservationPanel key={event.id} event={event} refreshing={isFetching} />
             </section>
           </article>
         ) : null}

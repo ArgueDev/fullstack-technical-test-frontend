@@ -1,4 +1,5 @@
 import { Link, Route, Routes } from 'react-router-dom'
+import { AdminPage } from './pages/AdminPage'
 import { Header } from './components/Header'
 import { EventsPage } from './pages/EventsPage'
 import { EventDetailPage } from './pages/EventDetailPage'
@@ -30,7 +31,7 @@ export default function App() {
           <Route path="/profile" element={<ProfilePage />} />
         </Route>
         <Route element={<ProtectedRoute role="admin" />}>
-          <Route path="/admin" element={<Placeholder title="Administración" />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Route>
         <Route path="*" element={<Placeholder title="Página no encontrada" />} />
       </Routes>
